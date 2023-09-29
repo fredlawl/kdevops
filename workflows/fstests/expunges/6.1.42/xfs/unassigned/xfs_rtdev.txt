@@ -1,1 +1,22 @@
+generic/012
+generic/013
+generic/016
+generic/021
+generic/022
+generic/058
+generic/060
+generic/061
+generic/063
+generic/074
+generic/075
+generic/112
+generic/113
+generic/251
 xfs/002 # xfs_growfs: log growth not supported yet
+xfs/073
+xfs/075
+xfs/179
+xfs/270
+xfs/507
+xfs/513
+xfs/557

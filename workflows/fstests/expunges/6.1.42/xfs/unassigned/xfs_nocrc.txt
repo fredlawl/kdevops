@@ -1,2 +1,5 @@
 generic/589 # failure rate is 1/10
+xfs/075
 xfs/195
+xfs/513
+xfs/557

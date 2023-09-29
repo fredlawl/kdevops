@@ -4,7 +4,11 @@ generic/730
 generic/731
 xfs/017
 xfs/045
+xfs/075
 xfs/160
 xfs/161
+xfs/270
 xfs/273
 xfs/438
+xfs/513
+xfs/557
