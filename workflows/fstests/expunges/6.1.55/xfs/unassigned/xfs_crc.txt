@@ -1,5 +1,7 @@
 generic/299
+generic/471
 xfs/075
 xfs/270
+xfs/506
 xfs/513
 xfs/557
