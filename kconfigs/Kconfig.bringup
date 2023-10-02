@@ -43,6 +43,18 @@ config TERRAFORM
 
 	  If you are not using a cloud environment just disable this.
 
+config KUBERNETES
+	bool "Kubernetes cloud environment"
+	help
+	  Enable this option to use Kubernetes to create guests as pods in a cloud
+	  environment. Enabling this option assumes you have a context already
+	  prepared for use in your ~/.kube/config file.
+
+	  Enabling this option will enable installing Kubernetes dependencies when
+	  you run:
+
+	    make deps
+
 config SKIP_BRINGUP
 	bool "Skip bring up - bare metal or existing nodes"
 	select EXTRA_STORAGE_SUPPORTS_512
@@ -78,3 +90,4 @@ source "terraform/Kconfig"
 if LIBVIRT
 source "kconfigs/Kconfig.libvirt"
 endif
+source "kubernetes/Kconfig"

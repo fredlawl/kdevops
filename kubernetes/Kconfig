@@ -1,0 +1,92 @@
+if KUBERNETES
+
+config KUBERNETES_EXPERIMENTAL
+    bool "enable kdevops Kubernetes experimental features?"
+    help
+      Not all kdevops Kubernetes experimental features may work.
+
+menu "Pod configuration"
+source "kubernetes/Kconfig.pod"
+endmenu
+
+menu "Pod SSH configuration"
+source "kubernetes/Kconfig.ssh"
+endmenu
+
+config HAVE_KUBECTL
+	bool
+	default $(shell, (kubectl version --client > /dev/null && echo "y") || echo "n")
+
+if KUBERNETES_EXPERIMENTAL
+# TODO: Correctly parse out the kubectl version
+# What's interesting here is that it's a good idea for kubectl to match
+# client version with server version as best as possible. We can only know the
+# server version head of time if we're already connected to a cluster. Therefore
+# we need to check for server version first if connected, else switch to
+# client version.
+config KUBERNETES_KUBECTL_VERSION
+    string "kubectl version (experimental)"
+    default "latest"
+    help
+      The default value is derived for you based on the version installed.
+
+      "latest" is the default if kdevops can not derive this version for you.
+
+config KUBERNETES_KUBECTL_DOWNLOAD
+    bool "Download kubectl for you? (experimental)"
+    default !HAVE_KUBECTL || KUBERNETES_KUBECTL_VERSION != "latest"
+    help
+      If you already have the KUBERNETES_KUBECTL_VERSION specified and
+      we couldn't derive it based on your chosen KUBECTL_CONTEXT, then
+      this won't attempt to download the version specified. If we can't
+      find kubectl in generally well-established PATHS, then we'll attempt
+      to download and install the version for you.
+
+      If you enable this with Y and KUBERNETES_KUBECTL_VERSION is "latest",
+      we'll always try to install an updated version.
+
+      Enable this for kdevops to download kubectl for you via:
+
+        make deps
+endif
+
+if !KUBERNETES_EXPERIMENTAL
+config KUBERNETES_KUBECTL_DOWNLOAD
+    bool
+    default "y"
+endif
+
+config KUBERNETES_CFG
+    string "configuration file"
+    default "~/.kube/config"
+    help
+      Kubernetes configuration location.
+
+config KUBERNETES_CONTEXT:
+    string "context"
+    default "kdevops"
+    help
+     We assume you created a context called kdevops already in
+     your KUBERNETES_CFG path filled with cluster and user information.
+
+     We consider a context without a cluster and a user specified
+     as undefined behavior.
+
+config KUBERNETES_NAMESPACE
+    string "namespace"
+    default "default"
+    help
+      The Kubernetes namespace to create the environment under.
+
+      Unless specified otherwise, the "default" namespace is used by
+      Kubernetes by default.
+
+if KUBERNETES_EXPERIMENTAL
+config KUBERNETES_CREATE_NAMESPACE
+    bool "Do you want kdevops to create a namespace for you? (experimental)"
+    help
+      Enable this for kdevops to attempt to create the namespace for you
+      in the cluster.
+endif
+
+endif # KUBERNETES

@@ -489,6 +489,7 @@ config FSTESTS_SPARSE_DEV
 	default "/dev/nvme1n1" if TERRAFORM_GCE
 	default "/dev/sdd" if TERRAFORM_AZURE
 	default TERRAFORM_OCI_SPARSE_VOLUME_DEVICE_FILE_NAME if TERRAFORM_OCI
+	default "/dev/vdc" if KUBERNETES
 	help
 	  The device to use to create a filesystem on where we will place
 	  sparse files.

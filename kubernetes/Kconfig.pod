@@ -1,0 +1,162 @@
+choice
+	prompt "How many vCPUs per pod"
+	default KUBERNETES_POD_VCPUS_8
+
+config KUBERNETES_POD_VCPUS_2
+	bool "2"
+
+config KUBERNETES_POD_VCPUS_4
+	bool "4"
+
+config KUBERNETES_POD_VCPUS_8
+	bool "8"
+
+config KUBERNETES_POD_VCPUS_16
+	bool "16"
+
+config KUBERNETES_POD_VCPUS_32
+	bool "32"
+
+config KUBERNETES_POD_VCPUS_64
+	bool "64"
+
+config KUBERNETES_POD_VCPUS_128
+	bool "128"
+
+endchoice
+
+config KUBERNETES_POD_VCPUS_COUNT
+	int
+	default 2 if KUBERNETES_POD_VCPUS_2
+	default 4 if KUBERNETES_POD_VCPUS_4
+	default 8 if KUBERNETES_POD_VCPUS_8
+	default 16 if KUBERNETES_POD_VCPUS_16
+	default 32 if KUBERNETES_POD_VCPUS_32
+	default 64 if KUBERNETES_POD_VCPUS_64
+	default 128 if KUBERNETES_POD_VCPUS_128
+	help
+	  The number of virtual CPUs to use per pod.
+
+choice
+	prompt "How much GiB memory to use per pod"
+	default KUBERNETES_POD_MEM_4G
+
+config KUBERNETES_POD_MEM_2G
+	bool "2"
+	help
+	  Most workflows should work well
+	  except for:
+	  - xfs/074 is known to fail due to the amount of RAM used by the
+	    obsolete xfs_scratch. Since xfs_scratch is obsolete this test
+	    will not run by default unless the test runner uses
+	    FORCE_XFS_CHECK_PROG=yes
+	  - git cloning linux-next requires > 2 GiB RAM if your clone is not
+	    shallow (BOOTLINUX_SHALLOW_CLONE)
+	  - xfs/084 and generic/627 often get killed by OOM killer and skipped
+
+config KUBERNETES_POD_MEM_3G
+	bool "3"
+	help
+	  No OOM killed tests observed when using 3 GiB of RAM on most workflows.
+
+config KUBERNETES_POD_MEM_4G
+	bool "4"
+	help
+	  No known issues are known when using 4 GiB of RAM on most workflows.
+
+config KUBERNETES_POD_MEM_8G
+	bool "8"
+
+config KUBERNETES_POD_MEM_16G
+	bool "16"
+
+config KUBERNETES_POD_MEM_32G
+	bool "32"
+
+endchoice
+
+config KUBERNETES_POD_MEM
+	int
+	default 2 if KUBERNETES_POD_MEM_2G
+	default 3 if KUBERNETES_POD_MEM_3G
+	default 4 if KUBERNETES_POD_MEM_4G
+	default 8 if KUBERNETES_POD_MEM_8G
+	default 16 if KUBERNETES_POD_MEM_16G
+	default 32 if KUBERNETES_POD_MEM_32G
+	help
+	  How much GiB of RAM to use per pod.
+
+choice
+	prompt "Cloud image Linux Distribution to use"
+	default KUBERNETES_POD_CLOUDIMG_DEBIAN
+
+config KUBERNETES_POD_CLOUDIMG_DEBIAN
+	bool "Debian"
+	# select HAVE_CUSTOM_DISTRO_HOST_PREFIX
+	select HAVE_DISTRO_XFS_PREFERS_MANUAL if FSTESTS_XFS
+	select HAVE_DISTRO_BTRFS_PREFERS_MANUAL if FSTESTS_BTRFS
+	select HAVE_DISTRO_EXT4_PREFERS_MANUAL if FSTESTS_EXT4
+	# select HAVE_DISTRO_PREFERS_CUSTOM_HOST_PREFIX
+	select HAVE_DISTRO_PREFERS_FSTESTS_WATCHDOG if KDEVOPS_WORKFLOW_ENABLE_FSTESTS
+	select HAVE_DISTRO_PREFERS_FSTESTS_WATCHDOG_KILL if KDEVOPS_WORKFLOW_ENABLE_FSTESTS
+	help
+	  This option will set the pod to Debian.
+
+endchoice
+
+if KUBERNETES_POD_CLOUDIMG_DEBIAN
+
+choice
+	prompt "Debian release to use"
+	default KUBERNETES_POD_DEBIAN_TESTING64
+
+config KUBERNETES_POD_DEBIAN_BUSTER64
+	bool "debian/buster64"
+	select HAVE_DISTRO_XFS_SUPPORTS_CRC if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_EXTERNAL_LOG if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_REFLINKS if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_BIGBLOCKS if FSTESTS_XFS
+	depends on TARGET_ARCH_X86_64
+	help
+	  This option will set the target guest to debian/buster64.
+
+config KUBERNETES_POD_DEBIAN_BULLSEYE64
+	bool "debian/bullseye64"
+	select HAVE_DISTRO_XFS_SUPPORTS_CRC if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_EXTERNAL_LOG if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_REFLINKS if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_BIGBLOCKS if FSTESTS_XFS
+	depends on TARGET_ARCH_X86_64
+	help
+	  This option will set the target guest to debian/bullseye64.
+
+config KUBERNETES_POD_DEBIAN_BOOKWORM64
+	bool "debian/bookworm64"
+	select HAVE_DISTRO_XFS_SUPPORTS_CRC if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_EXTERNAL_LOG if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_REFLINKS if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_BIGBLOCKS if FSTESTS_XFS
+	depends on TARGET_ARCH_X86_64
+	help
+	  This option will set the target guest to debian/bookworm64.
+
+config KUBERNETES_POD_DEBIAN_TESTING64
+	bool "debian/testing64"
+	select HAVE_DISTRO_XFS_SUPPORTS_CRC if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_EXTERNAL_LOG if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_REFLINKS if FSTESTS_XFS
+	select HAVE_DISTRO_XFS_SUPPORTS_BIGBLOCKS if FSTESTS_XFS
+	depends on TARGET_ARCH_X86_64
+	help
+	  This option will set the target guest to debian/testing64.
+
+endchoice
+
+config KUBERNETES_POD_DEBIAN_BOX_SHORT
+	string
+	default "buster64" if KUBERNETES_POD_DEBIAN_BUSTER64
+	default "bullseye64" if KUBERNETES_POD_DEBIAN_BULLSEYE64
+	default "bookworm64" if KUBERNETES_POD_DEBIAN_BOOKWORM64
+	default "testing64" if KUBERNETES_POD_DEBIAN_TESTING64
+
+endif # KUBERNETES_POD_CLOUDIMG_DEBIAN
