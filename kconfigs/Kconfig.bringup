@@ -28,8 +28,8 @@ config TERRAFORM
 	select EXTRA_STORAGE_SUPPORTS_2K
 	select EXTRA_STORAGE_SUPPORTS_4K
 	help
-	  This option will enable use of Vagrant. Enable this if you want to
-	  use terraform to create nodes on a cloud environment such as:
+	  Enable this if you want to use terraform to create nodes on a cloud
+	  environment such as:
 
 	    * Azure
 	    * AWS
