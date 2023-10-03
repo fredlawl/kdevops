@@ -99,6 +99,10 @@ include scripts/journal-server.Makefile
 KDEVOPS_BRING_UP_DEPS += $(KDEVOPS_BRING_UP_DEPS_EARLY)
 KDEVOPS_BRING_UP_DEPS += $(KDEVOPS_PROVISIONED_DEVCONFIG)
 
+ifeq (y,$(CONFIG_KUBERNETES))
+include scripts/kubernetes.Makefile
+endif # CONFIG_KUBERNETES
+
 ifeq (y,$(CONFIG_WORKFLOWS))
 include workflows/Makefile
 endif # CONFIG_WORKFLOWS

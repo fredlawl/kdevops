@@ -1,0 +1,18 @@
+---
+- name: Verify kubectl installation
+  command: "which kubectl"
+  register: kubectl_present
+  changed_when: kubectl_present.rc == 1
+  failed_when: kubectl_present.rc != 0 and kubectl_present.rc != 1
+  tags: [ 'kubectl', 'verify' ]
+
+# TODO: the version for kubectl is supplied by the kconfig, so we actually
+# need to prefer to download that one. Consider downloading latest source
+# instead like terraform?
+- name: Download kubectl from the latest release
+  ansible.builtin.package:
+    name:
+      - kubectl
+    state: latest
+  when:
+    - kubectl_present.rc != 0

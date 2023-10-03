@@ -15,6 +15,13 @@ kdevops_terraform_deps:
 		-e 'ansible_python_interpreter=/usr/bin/python3'
 PHONY += kdevops_terraform_deps
 
+kdevops_kubernetes_deps:
+	@$(Q)ansible-playbook $(ANSIBLE_VERBOSE) --connection=local \
+		--inventory localhost, \
+		$(KDEVOPS_PLAYBOOKS_DIR)/install_kubernetes.yml \
+		-e 'ansible_python_interpreter=/usr/bin/python3'
+PHONY += kdevops_kubernetes_deps
+
 kdevops_vagrant_install_vagrant:
 	@$(Q)ansible-playbook $(ANSIBLE_VERBOSE) --connection=local \
 		--inventory localhost, \
