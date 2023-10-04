@@ -1,0 +1,5 @@
+---
+- hosts: localhost
+  tasks:
+    - include_role:
+        name: install_kubernetes_boxes
